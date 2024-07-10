@@ -1,0 +1,3 @@
+The layout.js is a wrapper to all of page.jsx files in the currently / sub directories
+
+The page.jsx file is loaded when the url reaches the folder.
