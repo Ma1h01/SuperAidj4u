@@ -3,7 +3,7 @@ import React from "react";
 
 const SearchInput = () => {
   return (
-    <form>
+    <form className="hidden sm:block">
       <div className="relative w-full">
         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
           <Search className="w-4 h-4 text-gray-500 dark:text-gray-400" />

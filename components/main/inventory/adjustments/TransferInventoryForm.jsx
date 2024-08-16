@@ -5,18 +5,12 @@ import SubmitButton from "@/components/main/inventory/categories/SubmitButton";
 import { useForm } from "react-hook-form";
 import TextAreaInput from "@/components/main/inventory/categories/TextAreaInput";
 import SelectInput from "@/components/main/inventory/warehouses/SelectInput";
-
-const TransferInventoryForm = () => {
-  const selectionOptions = [
-    {
-      label: "Branch A",
-      value: "branchA_Id",
-    },
-    {
-      label: "Branch B",
-      value: "branchB_Id",
-    },
-  ];
+import toast from "react-hot-toast";
+import { makePostRequest } from "@/lib/apiRequest";
+import {
+  NEW_TRANSFER_ADJUSTMENT_URL,
+} from "@/lib/constants";
+const TransferInventoryForm = ({ items, warehouses }) => {
   const {
     register,
     handleSubmit,
@@ -27,26 +21,13 @@ const TransferInventoryForm = () => {
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data) => {
-    const baseUrl = "http://localhost:3000";
-    try {
-      console.log(data);
-      setLoading(true);
-      const response = await fetch(`${baseUrl}/api/adjustments/transfer`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (response.ok) {
-        console.log(response);
-        reset();
-      }
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error(error);
-    }
+    makePostRequest(
+      setLoading,
+      reset,
+      NEW_TRANSFER_ADJUSTMENT_URL,
+      data,
+      "adjustment",
+    );
   };
   return (
     <div>
@@ -58,25 +39,40 @@ const TransferInventoryForm = () => {
       >
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
           <TextInput
+            title="Reference Number"
+            name="referenceNumber"
+            register={register}
+            errors={errors}
+            type="text"
+          />
+          <SelectInput
+            name="itemId"
+            label="Select Item"
+            register={register}
+            className="w-full"
+            options={items}
+          />
+          <TextInput
             title="Enter Quantity of Stocks to Transfer"
             name="transferStockQty"
             register={register}
             errors={errors}
             type="number"
+            className="w-full"
           />
           <SelectInput
-            name="transferingWarehouseId"
+            name="givingWarehouseId"
             label="Select the Warehouse to Transfer Stocks"
             register={register}
             className="w-full"
-            options={selectionOptions}
+            options={warehouses}
           />
           <SelectInput
             name="receivingWarehouseId"
             label="Select the Warehouse to Receive Stocks"
             register={register}
             className="w-full"
-            options={selectionOptions}
+            options={warehouses}
           />
           <TextAreaInput
             title="Adjustment Notes"

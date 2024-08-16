@@ -6,7 +6,10 @@ import SubmitButton from "@/components/main/inventory/categories/SubmitButton";
 import { set, useForm } from "react-hook-form";
 import { Plus } from "lucide-react";
 import TextAreaInput from "@/components/main/inventory/categories/TextAreaInput";
-
+import toast from "react-hot-toast";
+import { makePostRequest } from "@/lib/apiRequest";
+import { CATEGORY_SERVER_BASE_URL, CATEGORY_CLIENT_BASE_URL } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 const NewCategory = () => {
   const {
     register,
@@ -16,33 +19,26 @@ const NewCategory = () => {
   } = useForm();
 
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const onSubmit = async (data) => {
-    const baseUrl = "http://localhost:3000"
-    try {
-      console.log(data);
-      setLoading(true);
-      const response = await fetch(`${baseUrl}/api/categories`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-      if (response.ok) {
-        console.log(response)
-        reset();
-      }
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error(error);
-    }
+    const success = await makePostRequest(
+      setLoading,
+      reset,
+      CATEGORY_SERVER_BASE_URL,
+      data,
+      "category",
+    );
+    setLoading(false);
+    if (success) {
+      router.push(CATEGORY_CLIENT_BASE_URL);
+      router.refresh();
+    }        
   };
   return (
     <div>
       {/* Header */}
-      <FormHeader title="New Category" href="/inventory/items" />
+      <FormHeader title="New Category" href="/inventory/categories" />
       {/* Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -50,8 +46,8 @@ const NewCategory = () => {
       >
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
           <TextInput
-            title="Category Title"
-            name="title"
+            title="Category Name"
+            name="name"
             register={register}
             errors={errors}
           />
@@ -62,7 +58,7 @@ const NewCategory = () => {
             errors={errors}
           />
         </div>
-        <SubmitButton isLoading={loading} title="Category" />
+        <SubmitButton isLoading={loading} title="Save Category" />
       </form>
     </div>
   );

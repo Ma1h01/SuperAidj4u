@@ -1,0 +1,102 @@
+"use client";
+import { React, useState } from "react";
+import FormHeader from "@/components/main/inventory/categories/FormHeader";
+import TextInput from "@/components/main/inventory/categories/TextInput";
+import SubmitButton from "@/components/main/inventory/categories/SubmitButton";
+import { useForm } from "react-hook-form";
+import { Trash2 } from "lucide-react";
+import { CATEGORY_CLIENT_BASE_URL, CATEGORY_SERVER_BASE_URL } from "@/lib/constants";
+import { makePutRequest, makeDeleteRequest } from "@/lib/apiRequest";
+import DisabledTextInput from "../../inventory/categories/DisabledTextInput";
+import { useRouter } from "next/navigation";
+import TextAreaInput from "../../inventory/categories/TextAreaInput";
+
+const CategoryInfoForm = ({ category }) => {
+  const [name, setName] = useState(category.name);
+  const [description, setDescription] = useState(category.description);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = async (data) => {
+    await makePutRequest(
+      setLoading,
+      `${CATEGORY_SERVER_BASE_URL}/${category.id}`,
+      data,
+      "category",
+    );
+    router.refresh();
+  };
+
+  const onDelete = async () => {
+    const success = await makeDeleteRequest(
+      `${CATEGORY_SERVER_BASE_URL}/${category.id}`,
+      "category",
+    );
+    if (success) {
+      router.push(CATEGORY_CLIENT_BASE_URL);
+      router.refresh();
+    }
+  };
+  return (
+    <div>
+      {/* Header */}
+      <FormHeader title="Category Info" href="/inventory/categories" />
+      {/* Form */}
+      <div className="w-full max-w-4xl p-4 bg-white border border-gray-200 rounded-md  shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700 mx-auto my-3">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+            <DisabledTextInput
+              title="ID"
+              text={category.id}
+              className="w-full"
+            />
+            <TextInput
+              title="Category Name"
+              name="name"
+              register={register}
+              errors={errors}
+              className="w-full"
+              textValue={name}
+              setTextValue={setName}
+            />
+            <TextAreaInput
+              title="Category Description"
+              name="description"
+              register={register}
+              errors={errors}
+              textValue={description}
+              setTextValue={setDescription}
+            />
+            <DisabledTextInput
+              title="Created At"
+              text={category.createdAt}
+              className="w-full"
+            />
+            <DisabledTextInput
+              title="Updated At"
+              text={category.updatedAt}
+              className="w-full"
+            />
+          </div>
+          <SubmitButton isLoading={loading} title="Update Category" />
+        </form>
+        <div className="flex justify-between">
+          <button
+            className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-red-500 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-red-500 hover:bg-red-600"
+            onClick={onDelete}
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CategoryInfoForm;

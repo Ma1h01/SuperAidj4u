@@ -6,7 +6,10 @@ import SubmitButton from "@/components/main/inventory/categories/SubmitButton";
 import { set, useForm } from "react-hook-form";
 import { Plus } from "lucide-react";
 import TextAreaInput from "@/components/main/inventory/categories/TextAreaInput";
-
+import toast from "react-hot-toast";
+import { makePostRequest } from "@/lib/apiRequest";
+import { UNIT_SERVER_BASE_URL, UNIT_CLIENT_BASE_URL } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 const NewUnit = () => {
   const {
     register,
@@ -16,33 +19,25 @@ const NewUnit = () => {
   } = useForm();
 
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const onSubmit = async (data) => {
-    const baseUrl = "http://localhost:3000"
-    try {
-      console.log(data);
-      setLoading(true);
-      const response = await fetch(`${baseUrl}/api/units`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-      if (response.ok) {
-        console.log(response)
-        reset();
-      }
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error(error);
-    }
+    const success = await makePostRequest(
+      setLoading,
+      reset,
+      UNIT_SERVER_BASE_URL,
+      data,
+      "unit",
+    );
+    setLoading(false);
+    if (success) {
+      router.push(UNIT_CLIENT_BASE_URL);
+      router.refresh();
+    }            
   };
   return (
     <div>
       {/* Header */}
-      <FormHeader title="New Unit" href="/inventory/items" />
+      <FormHeader title="New Unit" href="/inventory/units" />
       {/* Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -50,21 +45,21 @@ const NewUnit = () => {
       >
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
           <TextInput
-            title="Unit Title"
-            name="title"
+            title="Unit Name"
+            name="name"
             register={register}
             errors={errors}
             className="w-full"
           />
           <TextInput
-            title="Unit Abbrevuation"
+            title="Unit Abbreviation"
             name="abbreviation"
             register={register}
             errors={errors}
             className="w-full"
           />
         </div>
-        <SubmitButton isLoading={loading} title="Unit" />
+        <SubmitButton isLoading={loading} title="Save Unit" />
       </form>
     </div>
   );

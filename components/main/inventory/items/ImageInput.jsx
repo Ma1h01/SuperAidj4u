@@ -7,8 +7,9 @@ const ImageInput = ({
   label,
   imageUrl = "",
   setImageUrl,
-  uploadEnpoint = "imageUploader",
+  uploadEndPoint = "imageUploader",
   className = "col-span-full",
+  setIsImageSelected,
 }) => {
   return (
     <div className={className}>
@@ -40,14 +41,17 @@ const ImageInput = ({
         />
       ) : (
         <UploadDropzone
-          endpoint={uploadEnpoint}
+          endpoint={uploadEndPoint}
+          onDrop={(acceptedFiles) => {            
+            setIsImageSelected(true);
+          }}
           onClientUploadComplete={(res) => {
             setImageUrl(res[0].url);
-            // Do something with the response
+            setIsImageSelected(false);          
             alert("Upload Completed");
           }}
           onUploadError={(error) => {
-            // Do something with the error.
+            setIsImageSelected(false);
             alert(`ERROR! ${error.message}`);
           }}
         />

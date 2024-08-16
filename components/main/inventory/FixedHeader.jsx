@@ -2,10 +2,10 @@ import { Grid, HelpCircle, List, MoreHorizontal, Plus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-const FixedHeader = ({newLink}) => {
+const FixedHeader = ({title, newLink}) => {
   return (
     <div className="flex items-center justify-between bg-white py-5 px-4">
-      <button className="text-2xl">All Items</button>
+      <button className="text-2xl">{title}</button>
       <div className="flex gap-4">
           {/* New Button */}
           <Link href={newLink} className="rounded bg-blue-500 flex items-center px-3 py-1 space-x-2 text-white">

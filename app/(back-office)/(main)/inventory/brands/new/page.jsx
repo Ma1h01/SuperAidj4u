@@ -6,7 +6,10 @@ import SubmitButton from "@/components/main/inventory/categories/SubmitButton";
 import { set, useForm } from "react-hook-form";
 import { Plus } from "lucide-react";
 import TextAreaInput from "@/components/main/inventory/categories/TextAreaInput";
-
+import toast from "react-hot-toast";
+import { NEW_BRAND_URL, BRAND_CLIENT_BASE_URL } from "@/lib/constants";
+import { makePostRequest } from "@/lib/apiRequest";
+import { useRouter } from "next/navigation";
 const NewBrand = () => {
   const {
     register,
@@ -16,33 +19,20 @@ const NewBrand = () => {
   } = useForm();
 
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const onSubmit = async (data) => {
-    const baseUrl = "http://localhost:3000"
-    try {
-      console.log(data);
-      setLoading(true);
-      const response = await fetch(`${baseUrl}/api/brands`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-      if (response.ok) {
-        console.log(response)
-        reset();
-      }
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error(error);
+    const success = await makePostRequest(setLoading, reset, NEW_BRAND_URL, data, "brand");
+    setLoading(false);
+    if (success) {
+      router.push(BRAND_CLIENT_BASE_URL);
+      router.refresh();
     }
   };
   return (
     <div>
       {/* Header */}
-      <FormHeader title="New Brand" href="/inventory/items" />
+      <FormHeader title="New Brand" href="/inventory/brands" />
       {/* Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -50,14 +40,14 @@ const NewBrand = () => {
       >
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
           <TextInput
-            title="Unit Brand"
-            name="title"
+            title="Brand Name"
+            name="name"
             register={register}
             errors={errors}
             className="w-full"
-          />          
+          />
         </div>
-        <SubmitButton isLoading={loading} title="Brand" />
+        <SubmitButton isLoading={loading} title="Save Brand" />
       </form>
     </div>
   );

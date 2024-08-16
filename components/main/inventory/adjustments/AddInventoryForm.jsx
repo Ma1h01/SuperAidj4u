@@ -5,18 +5,11 @@ import SubmitButton from "@/components/main/inventory/categories/SubmitButton";
 import { useForm } from "react-hook-form";
 import TextAreaInput from "@/components/main/inventory/categories/TextAreaInput";
 import SelectInput from "@/components/main/inventory/warehouses/SelectInput";
-
-const AddInventoryForm = () => {
-  const selectionOptions = [
-    {
-      label: "Branch A",
-      value: "branchA_Id",
-    },
-    {
-      label: "Branch B",
-      value: "branchB_Id",
-    },
-  ];
+import { makePostRequest } from "@/lib/apiRequest";
+import {
+  NEW_ADD_ADJUSTMENT_URL,
+} from "@/lib/constants";
+const AddInventoryForm = ({ items, warehouses }) => {
   const {
     register,
     handleSubmit,
@@ -27,26 +20,13 @@ const AddInventoryForm = () => {
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data) => {
-    const baseUrl = "http://localhost:3000";
-    try {
-      console.log(data);
-      setLoading(true);
-      const response = await fetch(`${baseUrl}/api/adjustments/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (response.ok) {
-        console.log(response);
-        reset();
-      }
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error(error);
-    }
+    makePostRequest(
+      setLoading,
+      reset,
+      NEW_ADD_ADJUSTMENT_URL,
+      data,
+      "adjustment",
+    );
   };
   return (
     <div>
@@ -57,6 +37,21 @@ const AddInventoryForm = () => {
                 dark:bg-gray-800 dark:border-gray-700 mx-auto my-3"
       >
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+          <TextInput
+            title="Reference Number"
+            name="referenceNumber"
+            register={register}
+            errors={errors}
+            type="text"
+            className="w-full"
+          />
+          <SelectInput
+            name="itemId"
+            label="Select Item"
+            register={register}
+            className="w-full"
+            options={items}
+          />
           <TextInput
             title="Enter Quantity of Stocks to Add"
             name="addStockQty"
@@ -70,7 +65,7 @@ const AddInventoryForm = () => {
             label="Select the Warehouse to Add To"
             register={register}
             className="w-full"
-            options={selectionOptions}
+            options={warehouses}
           />
           <TextAreaInput
             title="Adjustment Notes"

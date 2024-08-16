@@ -4,6 +4,7 @@ const TextAreaInput = ({
   title,
   name,
   type = "text",
+  textValue = null, setTextValue = null,
   isRequired = true,
   className = "sm:col-span-2",
   register,
@@ -25,6 +26,8 @@ const TextAreaInput = ({
           rows={3}
           className="block w-full rounded border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           placeholder={`Type the ${title} here`}
+          value={textValue}
+          {...(setTextValue && { onChange: (e) => setTextValue(e.target.value) })}
         />
         {errors[name] && (
           <span className="text-sm text-red-600 ">{title} is required</span>

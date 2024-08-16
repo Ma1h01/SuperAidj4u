@@ -8,7 +8,12 @@ import {
 import CollapsibleLink from "./CollapsibleLink";
 import Link from "next/link";
 import { ChevronDown, ChevronRight } from "lucide-react";
-const SidebarDropdownMenu = ({ title, inventoryLinks, icon }) => {
+const SidebarDropdownMenu = ({
+  title,
+  inventoryLinks,
+  icon,
+  setShowSidebar,
+}) => {
   const [open, setOpen] = useState(false);
   const Icon = icon;
   return (
@@ -26,7 +31,12 @@ const SidebarDropdownMenu = ({ title, inventoryLinks, icon }) => {
       </CollapsibleTrigger>
       <CollapsibleContent>
         {inventoryLinks.map((link, i) => (
-          <CollapsibleLink key={i} title={link.title} href={link.href} />
+          <CollapsibleLink
+            key={i}
+            title={link.title}
+            href={link.href}
+            setShowSidebar={setShowSidebar}
+          />
         ))}
       </CollapsibleContent>
     </Collapsible>
