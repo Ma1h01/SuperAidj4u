@@ -10,7 +10,9 @@ const ImageInput = ({
   uploadEndPoint = "imageUploader",
   className = "col-span-full",
   setIsImageSelected,
+  register,
 }) => {
+  const [imageUrl1, setImageUrl1] = React.useState("");
   return (
     <div className={className}>
       <div className="flex justify-between items-center mb-4">
@@ -31,7 +33,7 @@ const ImageInput = ({
           </button>
         )}
       </div>
-      {imageUrl ? (
+      {/* {imageUrl ? (
         <Image
           src={imageUrl}
           alt="image image"
@@ -41,12 +43,14 @@ const ImageInput = ({
         />
       ) : (
         <UploadDropzone
+          {...register(imageUrl)}
           endpoint={uploadEndPoint}
           onDrop={(acceptedFiles) => {            
             setIsImageSelected(true);
           }}
           onClientUploadComplete={(res) => {
-            setImageUrl(res[0].url);
+            console.log(res);
+            setImageUrl(res[0].url);          
             setIsImageSelected(false);          
             alert("Upload Completed");
           }}
@@ -55,7 +59,29 @@ const ImageInput = ({
             alert(`ERROR! ${error.message}`);
           }}
         />
-      )}
+      )} */}
+      <UploadDropzone
+        // {...register(imageUrl)}
+        endpoint={uploadEndPoint}
+        onDrop={(acceptedFiles) => {
+          setIsImageSelected(true);
+          setImageUrl1("hello");
+          console.log(imageUrl1);
+        }}
+        onClientUploadComplete={(res) => {
+          console.log(res[0].url);
+          console.log(imageUrl1);          
+          setImageUrl1(res[0].url);
+          console.log(imageUrl1);  
+          setIsImageSelected(false);
+          alert("Upload Completed");
+        }}        
+        onUploadError={(error) => {
+          setIsImageSelected(false);
+          alert(`ERROR! ${error.message}`);
+        }}
+
+      />
     </div>
   );
 };

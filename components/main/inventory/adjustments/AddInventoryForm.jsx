@@ -8,7 +8,10 @@ import SelectInput from "@/components/main/inventory/warehouses/SelectInput";
 import { makePostRequest } from "@/lib/apiRequest";
 import {
   NEW_ADD_ADJUSTMENT_URL,
+  ADD_ADJUSTMENT_SERVER_BASE_URL,
+  ADJUSTMENT_CLIENT_BASE_URL,
 } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 const AddInventoryForm = ({ items, warehouses }) => {
   const {
     register,
@@ -18,16 +21,23 @@ const AddInventoryForm = ({ items, warehouses }) => {
   } = useForm();
 
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const onSubmit = async (data) => {
-    makePostRequest(
+  const onSubmit = async (data) => {    
+    const success = await makePostRequest(
       setLoading,
       reset,
-      NEW_ADD_ADJUSTMENT_URL,
+      ADD_ADJUSTMENT_SERVER_BASE_URL,
       data,
-      "adjustment",
+      "add adjustment",
     );
+    setLoading(false);
+    if (success) {
+      router.push(ADJUSTMENT_CLIENT_BASE_URL);
+      router.refresh();
+    }    
   };
+
   return (
     <div>
       {/* Form */}
@@ -74,7 +84,7 @@ const AddInventoryForm = ({ items, warehouses }) => {
             errors={errors}
           />
         </div>
-        <SubmitButton isLoading={loading} title="Adjustment" />
+        <SubmitButton isLoading={loading} title="Save Adjustment" />
       </form>
     </div>
   );

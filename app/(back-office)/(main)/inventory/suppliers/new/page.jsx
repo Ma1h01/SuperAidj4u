@@ -3,13 +3,11 @@ import { React, useState } from "react";
 import FormHeader from "@/components/main/inventory/categories/FormHeader";
 import TextInput from "@/components/main/inventory/categories/TextInput";
 import SubmitButton from "@/components/main/inventory/categories/SubmitButton";
-import { set, useForm } from "react-hook-form";
-import { Plus } from "lucide-react";
+import { useForm } from "react-hook-form";
 import TextAreaInput from "@/components/main/inventory/categories/TextAreaInput";
-import SelectInput from "@/components/main/inventory/warehouses/SelectInput";
-import toast from "react-hot-toast";
 import { makePostRequest } from "@/lib/apiRequest";
-import { NEW_SUPPLIER_URL } from "@/lib/constants";
+import { SUPPLIER_CLIENT_BASE_URL, SUPPLIER_SERVER_BASE_URL } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 const NewSupplier = () => {
   const {
     register,
@@ -19,9 +17,20 @@ const NewSupplier = () => {
   } = useForm();
 
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const onSubmit = async (data) => {
-    makePostRequest(setLoading, reset, NEW_SUPPLIER_URL, data, "supplier");
+    const success = await makePostRequest(
+      setLoading,
+      reset,
+      SUPPLIER_SERVER_BASE_URL,
+      data,
+      "supplier",
+    );
+    setLoading(false);
+    if (success) {
+      router.push(SUPPLIER_CLIENT_BASE_URL);
+      router.refresh();
+    }       
   };
   return (
     <div>
@@ -90,7 +99,7 @@ const NewSupplier = () => {
             errors={errors}
           />
         </div>
-        <SubmitButton isLoading={loading} title="Supplier" />
+        <SubmitButton isLoading={loading} title="Save Supplier" />
       </form>
     </div>
   );

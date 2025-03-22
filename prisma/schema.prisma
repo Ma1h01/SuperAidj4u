@@ -33,7 +33,7 @@ model Item {
   supplier                Supplier                  @relation(fields: [supplierId], references: [id])
   supplierId              String                    @db.ObjectId
   reorderPoint            Int?  
-  imageUrl                  String
+  imageUrl                  String?
   weight                  Float?
   dimensions              String?
   taxRate                 Float

@@ -45,7 +45,7 @@ export async function PUT(req, { params }) {
       where: { id: id },
       data: {
         referenceNumber: body.referenceNumber,
-        transferStockQty: body.transferStockQty,
+        transferStockQty: parseInt(body.transferStockQty),
         itemId: body.itemId,
         givingWarehouseId: body.givingWarehouseId,
         receivingWarehouseId: body.receivingWarehouseId,

@@ -3,13 +3,11 @@ import FormHeader from "@/components/main/inventory/categories/FormHeader";
 import CreateItemForm from "@/components/main/home/dashboard/CreateItemForm";
 import { getData } from "@/lib/getDataRequest";
 import {
-  NEW_ITEM_URL,
-  GET_BRANDS_URL,
-  GET_CATEGORIES_URL,
-  GET_ITEMS_URL,
-  GET_SUPPLIERS_URL,
-  GET_UNITS_URL,
-  GET_WAREHOUSES_URL,
+  CATEGORY_SERVER_BASE_URL,
+  BRAND_SERVER_BASE_URL,
+  UNIT_SERVER_BASE_URL,
+  WAREHOUSE_SERVER_BASE_URL,
+  SUPPLIER_SERVER_BASE_URL,
 } from "@/lib/constants";
 
 const NewItem = async () => {
@@ -21,11 +19,11 @@ const NewItem = async () => {
   // const suppliers = await getData(GET_SUPPLIERS_URL);
 
   // parallel fetching -> faster
-  const categoriesData = getData(GET_CATEGORIES_URL);
-  const unitsData = getData(GET_UNITS_URL);
-  const brandsData = getData(GET_BRANDS_URL);
-  const warehousesData = getData(GET_WAREHOUSES_URL);
-  const suppliersData = getData(GET_SUPPLIERS_URL);
+  const categoriesData = getData(CATEGORY_SERVER_BASE_URL);
+  const unitsData = getData(UNIT_SERVER_BASE_URL);
+  const brandsData = getData(BRAND_SERVER_BASE_URL);
+  const warehousesData = getData(WAREHOUSE_SERVER_BASE_URL);
+  const suppliersData = getData(SUPPLIER_SERVER_BASE_URL);
   const [categories, units, brands, warehouses, suppliers] = await Promise.all([
     categoriesData,
     unitsData,

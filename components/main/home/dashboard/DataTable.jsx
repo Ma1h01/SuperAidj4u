@@ -8,7 +8,7 @@ import { makeDeleteRequest } from '@/lib/apiRequest';
 const DataTable = ({dataKeys = [], data = [], infoLink, deleteLink, resourceName}) => {  
   const [dataList, setDataList] = useState(data);  
 
-  const onDelete = async (id) => {
+  const onDelete = async (id) => {    
     const success = await makeDeleteRequest(`${deleteLink}/${id}`, resourceName);    
     if (success) {
       setDataList(dataList.filter((item) => item.id !== id));

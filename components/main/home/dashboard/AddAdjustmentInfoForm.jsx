@@ -5,20 +5,30 @@ import TextInput from "@/components/main/inventory/categories/TextInput";
 import SubmitButton from "@/components/main/inventory/categories/SubmitButton";
 import { useForm } from "react-hook-form";
 import { Trash2 } from "lucide-react";
-import { WAREHOUSE_CLIENT_BASE_URL, warehouse_CLIENT_BASE_URL, WAREHOUSE_SERVER_BASE_URL, warehouse_SERVER_BASE_URL } from "@/lib/constants";
+import {
+  ADD_ADJUSTMENT_SERVER_BASE_URL,
+  ADJUSTMENT_CLIENT_BASE_URL,
+} from "@/lib/constants";
 import { makePutRequest, makeDeleteRequest } from "@/lib/apiRequest";
 import DisabledTextInput from "../../inventory/categories/DisabledTextInput";
 import { useRouter } from "next/navigation";
 import TextAreaInput from "../../inventory/categories/TextAreaInput";
 import SelectInput from "../../inventory/warehouses/SelectInput";
 
-const WarehouseInfoForm = ({ warehouse }) => {  
-  const [name, setName] = useState(warehouse.name);
-  const [location, setLocation] = useState(warehouse.location);
-  const [description, setDescription] = useState(warehouse.description);
-  const [warehouseType, setWarehouseType] = useState(warehouse.warehouseType);
+const AddAdjustmentInfoForm = ({ addAdjustment, items, warehouses }) => {
+  const [referenceNumber, setReferenceNumber] = useState(
+    addAdjustment.referenceNumber,
+  );
+  const [addStockQty, setAddStockQty] = useState(addAdjustment.addStockQty);
+  const [itemId, setItemId] = useState(addAdjustment.itemId);
+  const [receivingWarehouseId, setReceivingWarehouseId] = useState(
+    addAdjustment.receivingWarehouseId,
+  );
+  const [notes, setNotes] = useState(addAdjustment.notes);
+
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -26,97 +36,102 @@ const WarehouseInfoForm = ({ warehouse }) => {
     formState: { errors },
   } = useForm();
 
-  const selectionOptions = [
-    {
-      name: "Main",
-      id: "Main",
-    },
-    {
-      name: "Branch",
-      id: "Branch",
-    },
-  ];
-
   const onSubmit = async (data) => {
     await makePutRequest(
       setLoading,
-      `${WAREHOUSE_SERVER_BASE_URL}/${warehouse.id}`,
+      `${ADD_ADJUSTMENT_SERVER_BASE_URL}/${addAdjustment.id}`,
       data,
-      "warehouse",
+      "Add Adjustment",
     );
     router.refresh();
   };
 
   const onDelete = async () => {
     const success = await makeDeleteRequest(
-      `${WAREHOUSE_SERVER_BASE_URL}/${warehouse.id}`,
-      "warehouse",
+      `${ADD_ADJUSTMENT_SERVER_BASE_URL}/${addAdjustment.id}`,
+      "Add Adjustment",
     );
     if (success) {
-      router.push(WAREHOUSE_CLIENT_BASE_URL);
+      router.push(ADJUSTMENT_CLIENT_BASE_URL);
       router.refresh();
     }
   };
+
   return (
     <div>
       {/* Header */}
-      <FormHeader title="Warehouse Info" href="/inventory/warehouses" />
+      <FormHeader
+        title="Add Adjustment Info"
+        href={ADJUSTMENT_CLIENT_BASE_URL}
+      />
       {/* Form */}
       <div className="w-full max-w-4xl p-4 bg-white border border-gray-200 rounded-md  shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700 mx-auto my-3">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
             <DisabledTextInput
               title="ID"
-              text={warehouse.id}
-              className="w-full"
+              text={addAdjustment.id}              
             />
             <TextInput
-              title="Warehouse Name"
-              name="name"
+              title="Reference Number"
+              name="referenceNumber"
               register={register}
               errors={errors}
               className="w-full"
-              textValue={name}
-              setTextValue={setName}
-            />
-            <TextInput
-              title="Warehouse Location"
-              name="location"
-              register={register}
-              errors={errors}
-              className="w-full"
-              textValue={location}
-              setTextValue={setLoading}
+              textValue={referenceNumber}
+              setTextValue={setReferenceNumber}
             />
             <SelectInput
-              name="warehouseType"
-              label="Select The Warehouse Type"
-              register={register}
-              className="w-full"
-              options={selectionOptions}
-              textValue={warehouseType}
-              setTextValue={setWarehouseType}
-            />
-            <TextAreaInput
-              title="Warehouse Description"
-              name="description"
+              label="Item"
+              name="itemId"
               register={register}
               errors={errors}
-              textValue={description}
-              setTextValue={setDescription}
+              className="w-full"
+              textValue={itemId}
+              setTextValue={setItemId}
+              options={items}
             />
+            <TextInput
+              title="Quantity"
+              name="addStockQty"
+              register={register}
+              errors={errors}
+              className="w-full"
+              textValue={addStockQty}
+              setTextValue={setAddStockQty}
+              type="number"
+            />
+            <SelectInput
+              label="Receiving Warehouse"
+              name="receivingWarehouseId"
+              register={register}
+              errors={errors}
+              className="w-full"
+              textValue={receivingWarehouseId}
+              setTextValue={setReceivingWarehouseId}
+              options={warehouses}
+            />
+            <TextAreaInput
+              title="Notes"
+              name="notes"
+              register={register}
+              errors={errors}              
+              textValue={notes}
+              setTextValue={setNotes}            
+            />
+
             <DisabledTextInput
               title="Created At"
-              text={warehouse.createdAt}
+              text={addAdjustment.createdAt}
               className="w-full"
             />
             <DisabledTextInput
               title="Updated At"
-              text={warehouse.updatedAt}
+              text={addAdjustment.updatedAt}
               className="w-full"
             />
           </div>
-          <SubmitButton isLoading={loading} title="Update warehouse" />
+          <SubmitButton isLoading={loading} title="Update Add Adjustment" />
         </form>
         <div className="flex justify-between">
           <button
@@ -131,4 +146,4 @@ const WarehouseInfoForm = ({ warehouse }) => {
   );
 };
 
-export default WarehouseInfoForm;
+export default AddAdjustmentInfoForm;

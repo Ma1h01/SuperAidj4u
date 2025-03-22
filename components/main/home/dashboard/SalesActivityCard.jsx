@@ -6,7 +6,7 @@ const SalesActivityCard = (props) => {
     <>
       <Link
         href={props.href}
-        className="shadow rounded-lg border border-slate-200 hover:border-slate-400 cursor-pointer bg-white px-4 py-4 flex flex-col items-center gap-3 transition-all duration-300"
+        className="shadow rounded-lg border border-slate-200 hover:border-slate-400 cursor-pointer bg-white px-3 py-4 flex flex-col items-center gap-3 transition-all duration-300"
       >
         <h4 className={`font-semibold text-3xl ${props.color}`}>
           {props.number}

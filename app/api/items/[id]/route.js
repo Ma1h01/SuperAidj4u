@@ -44,18 +44,18 @@ export async function PUT(req, { params }) {
         categoryId: body.categoryId,
         sku: body.sku,
         barcode: body.barcode,
-        quantity: body.quantity,
+        quantity: parseInt(body.quantity),
         unitId: body.unitId,
         brandId: body.brandId,
         warehouseId: body.warehouseId,
-        sellingPrice: body.sellingPrice,
-        buyingPrice: body.buyingPrice,
+        sellingPrice: parseFloat(body.sellingPrice),
+        buyingPrice: parseFloat(body.buyingPrice),
         supplierId: body.supplierId,
-        reorderPoint: body.reorderPoint,
+        reorderPoint: parseInt(body.reorderPoint),
         imageUrl: body.imageUrl,
-        weight: body.weight,
+        weight: parseFloat(body.weight),
         weightUnit: body.weightUnit,
-        taxRate: body.taxRate,
+        taxRate: parseFloat(body.taxRate),
         notes: body.notes,
       },
     });
@@ -87,7 +87,7 @@ export async function DELETE(req, { params }) {
       return NextResponse.json(
         {
           message:
-            "There's item(s) associated with this item. Please delete the item(s) first",
+            "Some records are still referencing this item. Please delete those records first",
         },
         {
           status: 400,

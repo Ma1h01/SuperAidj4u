@@ -14,8 +14,7 @@ import DisabledTextInput from "../../inventory/categories/DisabledTextInput";
 import { useRouter } from "next/navigation";
 import TextAreaInput from "../../inventory/categories/TextAreaInput";
 
-const UnitInfoForm = ({ unit }) => {
-    console.log(unit);
+const UnitInfoForm = ({ unit }) => {    
   const [name, setName] = useState(unit.name);
   const [abbreviation, setAbbreviation] = useState(unit.abbreviation);
   const [loading, setLoading] = useState(false);

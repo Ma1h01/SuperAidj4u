@@ -29,8 +29,8 @@ export default function SelectInput({
             return (
               <option
                 key={i}
-                value={option.name}
-                selected={textValue === option.name}
+                value={option.id}
+                selected={textValue === option.id}
               >
                 {option.name}
               </option>

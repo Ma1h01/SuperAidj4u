@@ -9,7 +9,10 @@ import toast from "react-hot-toast";
 import { makePostRequest } from "@/lib/apiRequest";
 import {
   NEW_TRANSFER_ADJUSTMENT_URL,
+  TRANSFER_ADJUSTMENT_SERVER_BASE_URL,
+  ADJUSTMENT_CLIENT_BASE_URL,
 } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 const TransferInventoryForm = ({ items, warehouses }) => {
   const {
     register,
@@ -19,15 +22,20 @@ const TransferInventoryForm = ({ items, warehouses }) => {
   } = useForm();
 
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const onSubmit = async (data) => {
-    makePostRequest(
+    const success = await makePostRequest(
       setLoading,
       reset,
-      NEW_TRANSFER_ADJUSTMENT_URL,
+      TRANSFER_ADJUSTMENT_SERVER_BASE_URL,
       data,
-      "adjustment",
+      "add adjustment",
     );
+    setLoading(false);
+    if (success) {
+      router.push(ADJUSTMENT_CLIENT_BASE_URL);
+      router.refresh();
+    }      
   };
   return (
     <div>
@@ -81,7 +89,7 @@ const TransferInventoryForm = ({ items, warehouses }) => {
             errors={errors}
           />
         </div>
-        <SubmitButton isLoading={loading} title="Adjustment" />
+        <SubmitButton isLoading={loading} title="Save Adjustment" />
       </form>
     </div>
   );

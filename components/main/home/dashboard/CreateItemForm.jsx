@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { React, useState } from "react";
 import TextInput from "@/components/main/inventory/categories/TextInput";
 import SubmitButton from "@/components/main/inventory/categories/SubmitButton";
@@ -9,7 +9,11 @@ import ImageInput from "@/components/main/inventory/items/ImageInput";
 import { makePostRequest } from "@/lib/apiRequest";
 import {
   NEW_ITEM_URL,
+  ITEM_CLIENT_BASE_URL,
+  CATEGORY_SERVER_BASE_URL,
+  ITEM_SERVER_BASE_URL,
 } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 
 const NewItem = ({ categories, units, brands, warehouses, suppliers }) => {
   const [imageUrl, setImageUrl] = useState("");
@@ -22,10 +26,23 @@ const NewItem = ({ categories, units, brands, warehouses, suppliers }) => {
   } = useForm();
 
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const onSubmit = async (data) => {
-    makePostRequest(setLoading, reset, NEW_ITEM_URL, {...data, imageUrl}, "item");
-    setImageUrl("");
+    console.log(data);
+    const success = await makePostRequest(
+      setLoading,
+      reset,
+      ITEM_SERVER_BASE_URL,
+      data,
+      "item",
+    );
+    setLoading(false);
+    if (success) {
+      setImageUrl("");
+      router.push(ITEM_CLIENT_BASE_URL);
+      router.refresh();
+    }
   };
   return (
     <>
@@ -168,13 +185,18 @@ const NewItem = ({ categories, units, brands, warehouses, suppliers }) => {
             isRequired={false}
           />
           <ImageInput
-            label="Item Image"
+            label="Image"
             imageUrl={imageUrl}
             setImageUrl={setImageUrl}
-            setIsImageSelected={setIsImageSelected}         
-          />
+            setIsImageSelected={setIsImageSelected}
+            register={register}            
+          />          
         </div>
-        <SubmitButton isLoading={loading} isImageSelected={isImageSelected} title="Item" />
+        <SubmitButton
+          isLoading={loading}
+          isImageSelected={isImageSelected}
+          title="Save Item"
+        />
       </form>
     </>
   );
