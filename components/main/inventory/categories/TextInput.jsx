@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-const TextInput = ({title, name, type="text", textValue = null, setTextValue = null, isRequired=true, className="sm:col-span-2", register, errors, step="1"}) => {
+const TextInput = ({title, name, type="text", textValue = "", setTextValue = null, isRequired=true, className="sm:col-span-2", register, errors, step="1"}) => {
   return (
     <div className={className}>
       <label

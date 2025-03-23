@@ -1,89 +1,98 @@
 "use client";
-import { React, useState } from "react";
-import FormHeader from "@/components/main/inventory/categories/FormHeader";
-import TextInput from "@/components/main/inventory/categories/TextInput";
-import SubmitButton from "@/components/main/inventory/categories/SubmitButton";
-import { useForm } from "react-hook-form";
-import TextAreaInput from "@/components/main/inventory/categories/TextAreaInput";
-import SelectInput from "@/components/main/inventory/warehouses/SelectInput";
-import { makePostRequest } from "@/lib/apiRequest";
-import { WAREHOUSE_CLIENT_BASE_URL, WAREHOUSE_SERVER_BASE_URL } from "@/lib/constants";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-const NewWarehouse = () => {
-  const selectionOptions = [
-    {
-      name: "Main",      
-    },
-    {
-      name: "Branch",      
-    },
-  ];
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
+import FixedHeader from "@/components/main/inventory/FixedHeader";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useUserMeta } from "@/lib/context/UserMetaContext";
 
-  const [loading, setLoading] = useState(false);
+export default function NewWarehouse() {
   const router = useRouter();
+  const { addWarehouse } = useUserMeta();
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = async (data) => {
-    const success = await makePostRequest(
-      setLoading,
-      reset,
-      WAREHOUSE_SERVER_BASE_URL,
-      data,
-      "warehouse",
-    );
-    setLoading(false);
-    if (success) {
-      router.push(WAREHOUSE_CLIENT_BASE_URL);
-      router.refresh();
-    }    
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // In a real app, this would be an API call
+      const newWarehouse = {
+        id: Date.now(), // Temporary ID generation
+        ...formData,
+        createdAt: new Date().toISOString(),
+      };
+
+      // Update the context
+      addWarehouse(newWarehouse);
+
+      // Redirect back to inventory page
+      router.push("/inventory");
+    } catch (error) {
+      console.error("Error creating warehouse:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
   return (
-    <div>
-      {/* Header */}
-      <FormHeader title="New Warehouse" href="/inventory/warehouses" />
-      {/* Form */}
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-4xl p-4 bg-white border border-gray-200 rounded-md  shadow sm:p-6 md:p-8 
-                dark:bg-gray-800 dark:border-gray-700 mx-auto my-3"
-      >
-        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-          <TextInput
-            title="Warehouse Name"
-            name="name"
-            register={register}
-            errors={errors}
-            className="w-full"
-          />
-          <SelectInput
-            name="type"
-            label="Select The Warehouse Type"
-            register={register}
-            className="w-full"
-            options={selectionOptions}
-          />
-          <TextInput
-            title="Warehouse Location"
-            name="location"
-            register={register}
-            errors={errors}
-          />
-          <TextAreaInput
-            title="Warehouse Description"
-            name="description"
-            register={register}
-            errors={errors}
-          />
+    <div className="min-h-screen bg-slate-50">
+      <FixedHeader onLayoutChange={() => {}} />
+      <div className="max-w-2xl mx-auto p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+          <h2 className="text-xl font-semibold text-slate-900 mb-6">Create New Warehouse</h2>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
+                Warehouse Name
+              </label>
+              <Input
+                id="name"
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full"
+                placeholder="Enter warehouse name"
+              />
+            </div>
+            <div>
+              <label htmlFor="description" className="block text-sm font-medium text-slate-700 mb-2">
+                Description
+              </label>
+              <Input
+                id="description"
+                type="text"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full"
+                placeholder="Enter warehouse description"
+              />
+            </div>
+            <div className="flex justify-end gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.back()}
+                className="px-4 py-2"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-4 py-2 bg-blue-500 text-white hover:bg-blue-600"
+              >
+                {isSubmitting ? "Creating..." : "Create Warehouse"}
+              </Button>
+            </div>
+          </form>
         </div>
-        <SubmitButton isLoading={loading} title="Save Warehouse" />
-      </form>
+      </div>
     </div>
   );
-};
-
-export default NewWarehouse;
+}

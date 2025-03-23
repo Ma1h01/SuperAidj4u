@@ -14,41 +14,16 @@ import Link from "next/link";
 import { React } from "react";
 import SubscriptionReminder from "./SubscriptionReminder";
 import SidebarDropdownMenu from "./SidebarDropdownMenu";
+import { useUserMeta } from "@/lib/context/UserMetaContext";
 
 const Sidebar = ({showSidebar, setShowSidebar}) => {
+  const { warehouses } = useUserMeta();
   const inventoryLinks = [
-    {
-      title: "All",
-      href: "/inventory/",
-    },
-    {
-      title: "Items",
-      href: "/inventory/items",
-    },
-    {
-      title: "Categories",
-      href: "/inventory/categories/",
-    },
-    {
-      title: "Brands",
-      href: "/inventory/brands/",
-    },
-    {
-      title: "Units",
-      href: "/inventory/units/",
-    },
-    {
-      title: "Warehouses",
-      href: "/inventory/warehouses/",
-    },
-    {
-      title: "Inventory Adjustment",
-      href: "/inventory/adjustments/",
-    },
-    {
-      title: "Suppliers",
-      href: "/inventory/suppliers/",
-    },
+    { title: 'All', href: '/inventory' },
+    ...warehouses.map((warehouse) => ({
+      title: warehouse.name,
+      href: `/inventory/${warehouse.id}`,
+    })),
   ];
   const salesLinks = [
     {
@@ -131,19 +106,19 @@ const Sidebar = ({showSidebar, setShowSidebar}) => {
           inventoryLinks={salesLinks}
           icon={ShoppingBasket}
         />
-        <button href="" className="flex items-center space-x-2 p-2">
+        <button href={null} className="flex items-center space-x-2 p-2">
           <ShoppingBag className="w-4 h-4" />
           <span>Purchases</span>
         </button>
-        <button href="" className="flex items-center space-x-2 p-2">
+        <button href={null} className="flex items-center space-x-2 p-2">
           <Cable className="w-4 h-4" />
           <span>Integrations</span>
         </button>
-        <button href="" className="flex items-center space-x-2 p-2">
+        <button href={null} className="flex items-center space-x-2 p-2">
           <BarChart4 className="w-4 h-4" />
           <span>Reports</span>
         </button>
-        <button href="" className="flex items-center space-x-2 p-2">
+        <button href={null} className="flex items-center space-x-2 p-2">
           <FileText className="w-4 h-4" />
           <span>Documents</span>
         </button>
