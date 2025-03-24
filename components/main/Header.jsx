@@ -15,15 +15,45 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import SearchInput from "./SearchInput";
 import Image from "next/image";
-const Header = ({setShowSidebar}) => {
+
+const Header = ({setShowSidebar, isSidebarCollapsed}) => {
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const controlHeader = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Always show header at the top of the page
+      if (currentScrollY === 0) {
+        setIsVisible(true);
+      } else {
+        // Hide header when scrolling down, show when scrolling up
+        setIsVisible(currentScrollY < lastScrollY);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', controlHeader);
+    return () => window.removeEventListener('scroll', controlHeader);
+  }, [lastScrollY]);
+
   const onShowSidebarClick = () => {    
     setShowSidebar((prev) => !prev);
   }
+
   return (
-    <div className="bg-gray-100 h-12 flex items-center justify-between px-4 border-b border-slate-200">
+    <div 
+      className={`bg-gray-100 h-12 flex items-center justify-between px-4 border-b border-slate-200 fixed transition-all duration-300 z-40 ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      } ${
+        isSidebarCollapsed ? 'left-0 right-0' : 'left-60 right-0'
+      }`}
+    >
       <button className="lg:hidden" onClick={onShowSidebarClick}>
         <AlignJustify className="w-6 h-6" />
       </button>

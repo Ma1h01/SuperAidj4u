@@ -5,7 +5,7 @@ import FixedHeader from "@/components/main/inventory/FixedHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUserMeta } from "@/lib/context/UserMetaContext";
-import { addMockWarehouse, getMockWarehouses } from "@/lib/mockData";
+import { addMockWarehouse, getMockWarehouses } from "@/lib/adjustmentData";
 
 export default function NewWarehouse() {
   const router = useRouter();
@@ -33,6 +33,7 @@ export default function NewWarehouse() {
 
       // Redirect back to inventory page
       router.push("/inventory");
+      router.refresh();
     } catch (error) {
       console.error("Error creating warehouse:", error);
     } finally {

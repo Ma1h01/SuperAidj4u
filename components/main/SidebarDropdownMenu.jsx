@@ -1,45 +1,65 @@
 "use client";
-import { React, useState } from "react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import CollapsibleLink from "./CollapsibleLink";
-import Link from "next/link";
 import { ChevronDown, ChevronRight } from "lucide-react";
-const SidebarDropdownMenu = ({
-  title,
-  inventoryLinks,
-  icon,
-  setShowSidebar,
-}) => {
-  const [open, setOpen] = useState(false);
-  const Icon = icon;
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+
+const SidebarDropdownMenu = ({ title, inventoryLinks, icon: Icon, setShowSidebar, isCollapsed, setIsCollapsed }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const isActive = inventoryLinks.some(link => pathname === link.href);
+
+  const handleClick = () => {
+    if (isCollapsed) {
+      setIsCollapsed(false);
+      // Wait for the sidebar to expand before opening the dropdown
+      setTimeout(() => {
+        setIsOpen(true);
+      }, 300); // Match the transition duration
+    } else {
+      setIsOpen(!isOpen);
+    }
+  };
+
   return (
-    <Collapsible open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger className="flex justify-between items-center w-full">
-        <div className="flex items-center space-x-2 p-2">
-          <Icon className="w-4 h-4" />
-          <span>{title}</span>
-        </div>
-        {open ? (
-          <ChevronDown className="w-4 h-4" />
-        ) : (
-          <ChevronRight className="w-4 h-4" />
+    <div className="flex flex-col">
+      <button
+        onClick={handleClick}
+        className={`flex items-center space-x-2 p-2 rounded-md ${
+          isActive ? 'bg-blue-500 text-white' : 'hover:bg-slate-700'
+        }`}
+      >
+        <Icon className="w-4 h-4" />
+        {!isCollapsed && (
+          <>
+            <span>{title}</span>
+            {isOpen ? (
+              <ChevronDown className="w-4 h-4 ml-auto" />
+            ) : (
+              <ChevronRight className="w-4 h-4 ml-auto" />
+            )}
+          </>
         )}
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        {inventoryLinks.map((link, i) => (
-          <CollapsibleLink
-            key={i}
-            title={link.title}
-            href={link.href}
-            setShowSidebar={setShowSidebar}
-          />
-        ))}
-      </CollapsibleContent>
-    </Collapsible>
+      </button>
+      {isOpen && !isCollapsed && (
+        <div className="flex flex-col pl-4 mt-1">
+          {inventoryLinks.map((link) => (
+            <Link
+              key={link.title}
+              href={link.href}
+              onClick={() => setShowSidebar?.(false)}
+              className={`p-2 rounded-md text-sm border-l-2 my-0.5 ${
+                pathname === link.href
+                  ? "bg-blue-500/20 text-blue-300 border-blue-400"
+                  : "hover:bg-slate-700/50 border-transparent"
+              }`}
+            >
+              {link.title}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 

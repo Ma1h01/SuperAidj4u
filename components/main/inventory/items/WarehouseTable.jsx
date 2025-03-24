@@ -122,7 +122,7 @@ const WarehouseTable = ({ warehouse, adjustments }) => {
     }`}>
       <div className="flex items-center justify-between">
         <Link 
-          href={`/inventory/${warehouse.id}`}
+          href={`/inventory/warehouses/${warehouse.id}`}
           className="text-lg font-semibold text-slate-900 hover:text-slate-700 transition-colors"
         >
           {warehouse.name}

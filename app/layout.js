@@ -3,6 +3,7 @@ import "../styles/main.scss";
 import { Toaster } from "react-hot-toast";
 import { UserMetaProvider } from "@/lib/context/UserMetaContext";
 import { SearchProvider } from "@/lib/context/SearchContext";
+import LayoutContent from "@/components/layout/LayoutContent";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,8 +18,10 @@ export default function RootLayout({ children }) {
       <body className={inter.className} suppressHydrationWarning>
         <SearchProvider>
           <UserMetaProvider userId="current-user-id">
+            <LayoutContent>
+              {children}
+            </LayoutContent>
             <Toaster position="top-center" reverseOrder={false} />
-            {children}
           </UserMetaProvider>
         </SearchProvider>
       </body>

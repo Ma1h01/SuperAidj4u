@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { getMockWarehouses, getWarehouseAdjustments } from "@/lib/mockData";
+import { getMockWarehouses, getWarehouseAdjustments } from "@/lib/adjustmentData";
 import WarehouseTable from "@/components/main/inventory/items/WarehouseTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
