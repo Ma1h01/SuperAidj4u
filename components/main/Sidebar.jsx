@@ -11,16 +11,23 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { React } from "react";
+import { React, useState, useEffect } from "react";
 import SubscriptionReminder from "./SubscriptionReminder";
 import SidebarDropdownMenu from "./SidebarDropdownMenu";
 import { useUserMeta } from "@/lib/context/UserMetaContext";
+import { getMockWarehouses } from "@/lib/mockData";
 
 const Sidebar = ({showSidebar, setShowSidebar}) => {
-  const { warehouses } = useUserMeta();
+  const [warehouseList, setWarehouseList] = useState([]);
+
+  useEffect(() => {
+    // Update warehouse list whenever component renders
+    setWarehouseList(getMockWarehouses());
+  }, []); // Empty dependency array means this runs on mount
+
   const inventoryLinks = [
     { title: 'All', href: '/inventory' },
-    ...warehouses.map((warehouse) => ({
+    ...warehouseList.map((warehouse) => ({
       title: warehouse.name,
       href: `/inventory/${warehouse.id}`,
     })),

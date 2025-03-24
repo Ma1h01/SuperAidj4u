@@ -5,10 +5,11 @@ import FixedHeader from "@/components/main/inventory/FixedHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUserMeta } from "@/lib/context/UserMetaContext";
+import { addMockWarehouse, getMockWarehouses } from "@/lib/mockData";
 
 export default function NewWarehouse() {
   const router = useRouter();
-  const { addWarehouse } = useUserMeta();
+  const mockWarehouses = getMockWarehouses();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -22,13 +23,13 @@ export default function NewWarehouse() {
     try {
       // In a real app, this would be an API call
       const newWarehouse = {
-        id: Date.now(), // Temporary ID generation
+        id: mockWarehouses.length + 1, // Temporary ID generation
         ...formData,
         createdAt: new Date().toISOString(),
       };
 
       // Update the context
-      addWarehouse(newWarehouse);
+      addMockWarehouse(newWarehouse.id, newWarehouse.name);
 
       // Redirect back to inventory page
       router.push("/inventory");

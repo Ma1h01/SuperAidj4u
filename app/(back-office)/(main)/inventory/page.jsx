@@ -1,7 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useUserMeta } from "@/lib/context/UserMetaContext";
-import { mockWarehouses, getWarehouseAdjustments } from "@/lib/mockData";
+import { useState } from "react";
+import { getMockWarehouses, getWarehouseAdjustments } from "@/lib/mockData";
 import WarehouseTable from "@/components/main/inventory/items/WarehouseTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -9,13 +8,11 @@ import Link from "next/link";
 import FixedHeader from "@/components/main/inventory/FixedHeader";
 
 export default function Inventory() {
-  const { warehouses } = useUserMeta();
+  const mockWarehouses = getMockWarehouses();
   const [layout, setLayout] = useState("single");
-  console.log("Inventory page - warehouses from context:", warehouses);
 
   // Use mock warehouses instead of context for now
   const displayWarehouses = mockWarehouses;
-  console.log("Inventory page - using mock warehouses:", displayWarehouses);
 
   const handleLayoutChange = (newLayout) => {
     setLayout(newLayout);
@@ -44,10 +41,7 @@ export default function Inventory() {
       <div className="p-6">
         <div className={`space-y-6 ${layout === "double" ? "grid grid-cols-2 gap-6" : ""}`}>
           {displayWarehouses.map((warehouse) => {
-            console.log(`Processing warehouse ${warehouse.id}:`, warehouse);
-            const adjustments = getWarehouseAdjustments(warehouse.id);
-            console.log(`Got adjustments for warehouse ${warehouse.id}:`, adjustments);
-            
+            const adjustments = getWarehouseAdjustments(warehouse.id);            
             return (
               <WarehouseTable
                 key={warehouse.id}

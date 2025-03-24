@@ -9,7 +9,6 @@ const CollapsibleLink = ({ title, href, setShowSidebar }) => {
       onClick={() => setShowSidebar(false)}
     >
       <span className="text-sm">{title}</span>
-      <PlusCircle className="w-4 h-4" />
     </Link>
   );
 };

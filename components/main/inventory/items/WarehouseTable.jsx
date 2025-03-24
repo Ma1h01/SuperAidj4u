@@ -12,26 +12,40 @@ import { Input } from "@/components/ui/input";
 import { Search, ArrowUpDown, ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
+import { useSearch } from "@/lib/context/SearchContext";
 
 const ITEMS_PER_PAGE = 8;
 
 const WarehouseTable = ({ warehouse, adjustments }) => {
   console.log("WarehouseTable received:", { warehouse, adjustments });
 
-  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [localSearchTerm, setLocalSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
     key: "modifiedAt",
     direction: "desc",
   });
+  const { searchTerm, isExactMatch } = useSearch();
 
   useEffect(() => {
     console.log("Adjustments updated:", adjustments);
   }, [adjustments]);
 
-  const filteredAdjustments = adjustments.filter((adjustment) =>
+  // First filter based on warehouse name (global search)
+  const globallyFilteredAdjustments = searchTerm 
+    ? isExactMatch
+      ? warehouse.name === searchTerm
+        ? adjustments
+        : []
+      : warehouse.name.toLowerCase().includes(searchTerm.toLowerCase())
+        ? adjustments
+        : []
+    : adjustments;
+
+  // Then filter based on local search term
+  const filteredAdjustments = globallyFilteredAdjustments.filter((adjustment) =>
     Object.values(adjustment).some((value) =>
-      String(value).toLowerCase().includes(searchTerm.toLowerCase())
+      String(value).toLowerCase().includes(localSearchTerm.toLowerCase())
     )
   );
 
@@ -54,6 +68,11 @@ const WarehouseTable = ({ warehouse, adjustments }) => {
   });
 
   console.log("Sorted adjustments:", sortedAdjustments);
+
+  // Reset to first page when either search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [localSearchTerm, searchTerm]);
 
   const totalPages = Math.ceil(sortedAdjustments.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -94,7 +113,13 @@ const WarehouseTable = ({ warehouse, adjustments }) => {
   };
 
   return (
-    <div className="space-y-4 bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+    <div className={`space-y-4 bg-white rounded-lg shadow-sm border border-slate-200 p-4 ${
+      searchTerm && (isExactMatch 
+        ? warehouse.name !== searchTerm
+        : !warehouse.name.toLowerCase().includes(searchTerm.toLowerCase())) 
+      ? 'hidden' 
+      : ''
+    }`}>
       <div className="flex items-center justify-between">
         <Link 
           href={`/inventory/${warehouse.id}`}
@@ -105,11 +130,11 @@ const WarehouseTable = ({ warehouse, adjustments }) => {
         <div className="relative w-64">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-slate-400" />
           <Input
-            placeholder="Search adjustments..."
-            value={searchTerm}
+            placeholder="Filter products..."
+            value={localSearchTerm}
             onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1); // Reset to first page on search
+              setLocalSearchTerm(e.target.value);
+              setCurrentPage(1);
             }}
             className="pl-8 bg-slate-50 border-slate-200 focus:border-slate-300"
           />
